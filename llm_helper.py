@@ -1,16 +1,11 @@
-from langchain_groq import ChatGroq
-import os
-from dotenv import load_dotenv
+from groq_llm import generate_groq_post, generate_groq_hashtags
 
-load_dotenv()
-llm = ChatGroq(groq_api_key=os.getenv("GROQ_API_KEY"), model_name="llama-3.2-90b-text-preview")
+def llm(topic, length, language):
+    post = generate_groq_post(topic, length, language)
+    tags = generate_groq_hashtags(topic)
 
-
-if __name__ == "__main__":
-    response = llm.invoke("Two most important ingradient in samosa are ")
-    print(response.content)
-
-
-
-
-
+    return {
+        "post": post,
+        "hashtags": tags,
+        "engagement": round(len(post) / 250, 2)
+    }

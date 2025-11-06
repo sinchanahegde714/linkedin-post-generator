@@ -1,42 +1,122 @@
 import streamlit as st
-from few_shot import FewShotPosts
 from post_generator import generate_post
 
+# ------------------- PAGE CONFIG -------------------
+st.set_page_config(
+    page_title="LinkedIn Post Generator 🚀",
+    page_icon="🚀",
+    layout="wide"
+)
 
-# Options for length and language
-length_options = ["Short", "Medium", "Long"]
-language_options = ["English", "Hinglish"]
+# ------------------- CUSTOM CSS -------------------
+st.markdown("""
+<style>
 
+body {
+    background: linear-gradient(135deg, #0a0f24 0%, #1a1449 50%, #0d0f2d 100%);
+    font-family: 'Segoe UI', sans-serif;
+}
 
-# Main app layout
-def main():
-    st.subheader("LinkedIn Post Generator: Codebasics")
+div[data-testid="stAppViewContainer"] {
+    background: linear-gradient(135deg, #0a0f24 0%, #1a1449 50%, #0d0f2d 100%);
+}
 
-    # Create three columns for the dropdowns
-    col1, col2, col3 = st.columns(3)
+h1, label, .section-title {
+    color: #ffffff !important;
+}
 
-    fs = FewShotPosts()
-    tags = fs.get_tags()
-    with col1:
-        # Dropdown for Topic (Tags)
-        selected_tag = st.selectbox("Topic", options=tags)
+.section-title {
+    font-size: 32px; 
+    font-weight: 700;
+    margin-bottom: 10px;
+}
 
-    with col2:
-        # Dropdown for Length
-        selected_length = st.selectbox("Length", options=length_options)
+p, .stMarkdown, .stText {
+    color: #e6e6ff;
+}
 
-    with col3:
-        # Dropdown for Language
-        selected_language = st.selectbox("Language", options=language_options)
+.card {
+    background: rgba(255,255,255,0.08);
+    padding: 22px;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+    border: 1px solid rgba(255,255,255,0.25);
+    margin-top: 12px;
+}
 
+.stButton button {
+    background: #5a2dd8 !important; 
+    color: white !important;
+    border-radius: 10px;
+    height: 48px;
+    border: none;
+    font-size: 18px;
+    font-weight: 600;
+}
 
+.stButton button:hover {
+    background: #4319b8 !important;
+    border: 1px solid #ffffff;
+}
 
-    # Generate Button
-    if st.button("Generate"):
-        post = generate_post(selected_length, selected_language, selected_tag)
-        st.write(post)
+.header-box {
+    text-align:center; 
+    margin-bottom:30px;
+}
 
+</style>
+""", unsafe_allow_html=True)
 
-# Run the app
-if __name__ == "__main__":
-    main()
+# ------------------- HEADER -------------------
+st.markdown("""
+<div class="header-box">
+    <h1 style="font-size:42px; font-weight:800;">
+        LinkedIn Post Generator 🚀
+    </h1>
+    <p style="font-size:18px; color:#bdbdfc;">
+        Craft premium LinkedIn content that attracts employers & recruiters 🎯
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+# ------------------- INPUT UI -------------------
+topics = ["Productivity", "Leadership", "Career Advice", "AI", "Startups", "Motivation", "Learning", "Sapne"]
+lengths = ["Short", "Medium", "Long"]
+
+# ✅ Updated languages
+languages = ["English", "Hindi", "Kannada"]
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    topic = st.selectbox("📌 Select Topic", topics)
+
+with col2:
+    length = st.selectbox("📝 Select Post Length", lengths)
+
+with col3:
+    language = st.selectbox("🌐 Select Language", languages)
+
+generate = st.button("✨ Generate Post")
+
+# ------------------- OUTPUT -------------------
+if generate:
+    result = generate_post(topic, length, language)
+
+    st.markdown(f"<div class='card'><div class='section-title'>Generated Post 👇</div>", unsafe_allow_html=True)
+    st.write(result["post"])
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown(f"""
+    <div class='card'>
+        <div class='section-title'>🔥 Engagement Score</div>
+        <p style='font-size:22px; font-weight:700; color:#c7b3ff;'>{result["engagement"]}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown(f"""
+    <div class='card'>
+        <div class='section-title'>🔗 Hashtags</div>
+        <p style='font-size:18px; font-weight:500; color:#e6e6ff;'>{' '.join(result["hashtags"])}</p>
+    </div>
+    """, unsafe_allow_html=True)
